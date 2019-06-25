@@ -21,6 +21,12 @@ def get_images(query, limit=100):
         full_url = json_item['file_url']
         if json_item['sample']:
             full_url = get_sample_url(json_item['file_url'])
+            height = json_item['sample_height']
+            width = json_item['sample_width']
+        else:
+            height = json_item['height']
+            width = json_item['width']
+
         if not (full_url.endswith('.jpg') or full_url.endswith('.jpeg')):
             continue
 
@@ -28,6 +34,8 @@ def get_images(query, limit=100):
         result['id'] = json_item['id']
         result['thumbnail_url'] = get_thumbnail_url(json_item['file_url'])
         result['full_url'] = full_url
+        result['photo_height'] = height
+        result['photo_width'] = width
         results.append(result)
 
     results = results[:20]
@@ -43,4 +51,4 @@ def get_thumbnail_url(full_url):
 def get_sample_url(full_url):
     prefix1, prefix2, image_name = full_url.split('/')[-3:]
     image_name = image_name.split('.')[0]
-    return f'https://gelbooru.com/samples/{prefix1}/{prefix2}/sample_{image_name}.jpg'
+    return f'https://img2.gelbooru.com//samples/{prefix1}/{prefix2}/sample_{image_name}.jpg'

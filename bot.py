@@ -48,7 +48,9 @@ def gelbooru_images(bot, update):
                     id=image['id'],
                     title=image['id'],
                     photo_url=image['full_url'],
-                    thumb_url=image['thumbnail_url']
+                    thumb_url=image['thumbnail_url'],
+                    photo_height=image['photo_height'],
+                    photo_width=image['photo_width'],
                 )
             )
         except Exception as e:
