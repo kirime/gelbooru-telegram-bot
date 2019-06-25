@@ -17,6 +17,7 @@ TOKEN = os.getenv("TOKEN")
 if mode == "dev":
     def run(updater):
         updater.start_polling()
+        updater.idle()
 elif mode == "prod":
     def run(updater):
         PORT = int(os.environ.get("PORT", "8443"))
@@ -39,16 +40,18 @@ def gelbooru_images(bot, update):
     if not query:
         return
     results = list()
-    images = get_images(query.split(' '), limit=10, page_id=0)
+    good_query = 'sort:score '+str(query)
+    images = get_images(good_query.strip().split(' '), limit=50)
     for image in images:
-        results.append(
-            InlineQueryResultPhoto(
-                id=query,
-                title='Gelbooru images',
-                photo_url=image['full_url'],
-                thumb_url=image['thumbnail_url']
-            )
-        )
+        try:
+            results.append(InlineQueryResultPhoto(
+                    id=image['id'],
+                    title=image['id'],
+                    photo_url=image['full_url'],
+                    thumb_url=image['thumbnail_url']
+                ))
+        except Exception as e:
+            logger.error(e)
     bot.answer_inline_query(update.inline_query.id, results)
 
 
