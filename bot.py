@@ -39,17 +39,18 @@ def gelbooru_images(bot, update):
     query = update.inline_query.query
     if not query:
         return
-    results = list()
-    good_query = 'sort:score '+str(query)
-    images = get_images(good_query.strip().split(' '), limit=50)
+    results = []
+    images = get_images(query, limit=100)
     for image in images:
         try:
-            results.append(InlineQueryResultPhoto(
+            results.append(
+                InlineQueryResultPhoto(
                     id=image['id'],
                     title=image['id'],
                     photo_url=image['full_url'],
                     thumb_url=image['thumbnail_url']
-                ))
+                )
+            )
         except Exception as e:
             logger.error(e)
     bot.answer_inline_query(update.inline_query.id, results)

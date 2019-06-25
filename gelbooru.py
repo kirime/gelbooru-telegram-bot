@@ -3,35 +3,44 @@ import json
 import urllib.parse
 
 
-def get_images(tags, limit=100):
-    params = {
-        'page': 'dapi',
-        's': 'post',
-        'q': 'index',
-        'json': 1,
-        'limit': limit
-    }
-    tags = urllib.parse.quote(" ".join(tags[1:]))
-    request_url = f'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&' \
-        f'limit={params["limit"]}&pid=0&tags={tags}'
+def get_images(query, limit=100):
+    tags = urllib.parse.quote(query.strip())
+    request_url = f'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit={limit}&pid=0&tags={tags}'
+
     response = requests.get(request_url)
-    if response.status_code == 200:
-        try:
-            json_response = json.loads(response.text)
-            results = [
-                {
-                    'id': entry['id'],
-                    'full_url': entry['file_url'],
-                    'thumbnail_url': get_thumbnail_url(entry['file_url'])
-                }
-                for entry in json_response if entry['file_url'].endswith('.jpg') or entry['file_url'].endswith('.jpeg')]
-        except json.decoder.JSONDecodeError:
-            results = []
-        results = results[:20]
-        return results
+    if response.status_code != 200:
+        return []
+
+    try:
+        json_response = json.loads(response.text)
+    except json.decoder.JSONDecodeError:
+        return []
+
+    results = []
+    for json_item in json_response:
+        full_url = json_item['file_url']
+        if json_item['sample'] == "true":
+            full_url = get_sample_url(json_item['file_url'])
+        if not (full_url.endswith('.jpg') or full_url.endswith('.jpeg')):
+            continue
+
+        result = dict()
+        result['id'] = json_item['id']
+        result['thumbnail_url'] = get_thumbnail_url(json_item['file_url'])
+        result['full_url'] = full_url
+        results.append(result)
+
+    results = results[:20]
+    return results
 
 
 def get_thumbnail_url(full_url):
     prefix1, prefix2, image_name = full_url.split('/')[-3:]
     image_name = image_name.split('.')[0]
     return f'https://gelbooru.com/thumbnails/{prefix1}/{prefix2}/thumbnail_{image_name}.jpg'
+
+
+def get_sample_url(full_url):
+    prefix1, prefix2, image_name = full_url.split('/')[-3:]
+    image_name = image_name.split('.')[0]
+    return f'https://gelbooru.com/samples/{prefix1}/{prefix2}/sample_{image_name}.jpg'
