@@ -40,8 +40,8 @@ def gelbooru_images(bot, update):
     if not query:
         return
     results = list()
-    good_query = 'sort:score '+str(query)
-    images = get_images(good_query.strip().split(' '), limit=50)
+    good_query = str(query)
+    images = get_images(good_query.strip().split(' '), limit=100)
     for image in images:
         try:
             results.append(InlineQueryResultPhoto(

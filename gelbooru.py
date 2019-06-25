@@ -3,7 +3,7 @@ import json
 import urllib.parse
 
 
-def get_images(tags, limit=50):
+def get_images(tags, limit=100):
     params = {
         'page': 'dapi',
         's': 'post',
@@ -27,7 +27,7 @@ def get_images(tags, limit=50):
                 for entry in json_response if entry['file_url'].endswith('.jpg') or entry['file_url'].endswith('.jpeg')]
         except json.decoder.JSONDecodeError:
             results = []
-        results = results[:10]
+        results = results[:20]
         return results
 
 
