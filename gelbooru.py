@@ -19,7 +19,7 @@ def get_images(query, limit=100):
     results = []
     for json_item in json_response:
         full_url = json_item['file_url']
-        if json_item['sample'] == "true":
+        if json_item['sample']:
             full_url = get_sample_url(json_item['file_url'])
         if not (full_url.endswith('.jpg') or full_url.endswith('.jpeg')):
             continue
