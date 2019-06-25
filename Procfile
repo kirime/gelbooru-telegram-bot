@@ -1,1 +1,1 @@
-web: python my_bot.py
+bot: python bot.py -a christian-pics-telegram-bot
