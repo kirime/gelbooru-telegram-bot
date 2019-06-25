@@ -11,7 +11,7 @@ def get_images(tags, limit=100):
         'json': 1,
         'limit': limit
     }
-    tags = urllib.parse.quote(" ".join(tags))
+    tags = urllib.parse.quote(" ".join(tags[1:]))
     request_url = f'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&' \
         f'limit={params["limit"]}&pid=0&tags={tags}'
     response = requests.get(request_url)
