@@ -3,9 +3,9 @@ import json
 import urllib.parse
 
 
-def get_images(query, limit=100):
+def get_images(query, limit=50, pid=0):
     tags = urllib.parse.quote(query.strip())
-    request_url = f'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit={limit}&pid=0&tags={tags}'
+    request_url = f'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit={limit}&pid={pid}&tags={tags}'
 
     response = requests.get(request_url)
     if response.status_code != 200:
@@ -38,7 +38,7 @@ def get_images(query, limit=100):
         result['photo_width'] = width
         results.append(result)
 
-    results = results[:20]
+    results = results[:50]
     return results
 
 

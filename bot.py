@@ -39,8 +39,13 @@ def gelbooru_images(bot, update):
     query = update.inline_query.query
     if not query:
         return
+
+    offset = update.inline_query.offset
+    pid = int(offset) if offset else 0
+    limit = 50
+
     results = []
-    images = get_images(query, limit=100)
+    images = get_images(query, limit=limit, pid=pid)
     for image in images:
         try:
             results.append(
@@ -55,7 +60,7 @@ def gelbooru_images(bot, update):
             )
         except Exception as e:
             logger.error(e)
-    bot.answer_inline_query(update.inline_query.id, results)
+    bot.answer_inline_query(update.inline_query.id, results, next_offset=str(pid+limit))
 
 
 if __name__ == '__main__':
