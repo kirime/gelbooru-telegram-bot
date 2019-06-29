@@ -60,7 +60,7 @@ def gelbooru_images(bot, update):
             )
         except Exception as e:
             logger.error(e)
-    bot.answer_inline_query(update.inline_query.id, results, next_offset=str(pid+limit))
+    bot.answer_inline_query(update.inline_query.id, results, next_offset=str(pid+1))
 
 
 if __name__ == '__main__':
