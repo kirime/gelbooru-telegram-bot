@@ -1,2 +1,3 @@
-# christianpicsbot
-Only christian pics, perfectly safe
+# Inline telegram bot for Gelbooru
+
+Usage: @christianpicsbot \[list of tags]
