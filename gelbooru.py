@@ -66,8 +66,9 @@ def autocomplete(query):
         return query
 
     try:
-        autocompleted_tag_list = json.loads(response.text)
-    except json.decoder.JSONDecodeError:
+        autocompleted_tag_list = list(json.loads(response.text))
+        autocompleted_tag = autocompleted_tag_list[0]
+    except (IndexError, json.decoder.JSONDecodeError):
         return query
 
-    return ' '.join([rest_of_query, autocompleted_tag_list[0]])
+    return ' '.join([rest_of_query, autocompleted_tag])
