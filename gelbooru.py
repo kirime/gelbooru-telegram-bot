@@ -52,3 +52,22 @@ def get_sample_url(full_url):
     prefix1, prefix2, image_name = full_url.split('/')[-3:]
     image_name = image_name.split('.')[0]
     return f'https://img2.gelbooru.com//samples/{prefix1}/{prefix2}/sample_{image_name}.jpg'
+
+
+def autocomplete(query):
+    split_query = query.rsplit(' ', 1)
+    last_tag = split_query[-1]
+    rest_of_query = split_query[0] if len(split_query) > 1 else ''
+
+    encoded_last_tag = urllib.parse.quote(last_tag)
+    request_url = f'https://gelbooru.com/index.php?page=autocomplete&term={encoded_last_tag}'
+    response = requests.get(request_url)
+    if response.status_code != 200:
+        return query
+
+    try:
+        autocompleted_tag_list = json.loads(response.text)
+    except json.decoder.JSONDecodeError:
+        return query
+
+    return ' '.join([rest_of_query, autocompleted_tag_list[0]])

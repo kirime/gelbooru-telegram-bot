@@ -1,6 +1,6 @@
 from telegram import InlineQueryResultPhoto
 from telegram.ext import Updater, CommandHandler, InlineQueryHandler
-from gelbooru import get_images
+from gelbooru import get_images, autocomplete
 import logging
 import os
 import sys
@@ -45,6 +45,7 @@ def gelbooru_images(bot, update):
     limit = 50
 
     results = []
+    query = autocomplete(query)
     images = get_images(query, limit=limit, pid=pid)
     for image in images:
         try:
