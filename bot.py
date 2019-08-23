@@ -1,4 +1,4 @@
-from telegram import InlineQueryResultPhoto
+from telegram import InlineQueryResultPhoto, InlineQueryResultGif
 from telegram.ext import Updater, CommandHandler, InlineQueryHandler
 from gelbooru import get_images, autocomplete
 import logging
@@ -49,16 +49,25 @@ def gelbooru_images(bot, update):
     images = get_images(query, limit=limit, pid=pid)
     for image in images:
         try:
-            results.append(
-                InlineQueryResultPhoto(
+            if image['full_url'].endswith('.gif'):
+                result = InlineQueryResultGif(
+                    id=image['id'],
+                    title=image['id'],
+                    gif_url=image['full_url'],
+                    thumb_url=image['thumbnail_url'],
+                    gif_height=image['image_width'],
+                    gif_width=image['image_height'],
+                )
+            else:
+                result = InlineQueryResultPhoto(
                     id=image['id'],
                     title=image['id'],
                     photo_url=image['full_url'],
                     thumb_url=image['thumbnail_url'],
-                    photo_height=image['photo_height'],
-                    photo_width=image['photo_width'],
+                    photo_height=image['image_height'],
+                    photo_width=image['image_width'],
                 )
-            )
+            results.append(result)
         except Exception as e:
             logger.error(e)
     bot.answer_inline_query(update.inline_query.id, results, next_offset=str(pid+1))

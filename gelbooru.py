@@ -1,6 +1,7 @@
 import requests
 import json
 import urllib.parse
+from os.path import splitext, basename
 
 
 def get_images(query, limit=50, pid=0):
@@ -27,15 +28,16 @@ def get_images(query, limit=50, pid=0):
             height = json_item['height']
             width = json_item['width']
 
-        if not (full_url.endswith('.jpg') or full_url.endswith('.jpeg')):
+        extension = splitext(basename(full_url))[1]
+        if extension not in ['.jpeg', '.jpg', '.gif']:
             continue
 
         result = dict()
         result['id'] = json_item['id']
         result['thumbnail_url'] = get_thumbnail_url(json_item['file_url'])
         result['full_url'] = full_url
-        result['photo_height'] = height
-        result['photo_width'] = width
+        result['image_height'] = height
+        result['image_width'] = width
         results.append(result)
 
     results = results[:50]
