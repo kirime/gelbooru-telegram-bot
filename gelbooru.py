@@ -61,6 +61,9 @@ def autocomplete(query):
     last_tag = split_query[-1]
     rest_of_query = split_query[0] if len(split_query) > 1 else ''
 
+    if not last_tag:  # no need to make requests if last tag is empty
+        return query
+
     encoded_last_tag = urllib.parse.quote(last_tag)
     request_url = f'https://gelbooru.com/index.php?page=autocomplete&term={encoded_last_tag}'
     response = requests.get(request_url)
