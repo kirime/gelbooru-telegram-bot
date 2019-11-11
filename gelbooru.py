@@ -34,6 +34,7 @@ def get_images(query, limit=50, pid=0):
 
         result = dict()
         result['id'] = json_item['id']
+        result['rating'] = json_item['rating']
         result['thumbnail_url'] = get_thumbnail_url(json_item['file_url'])
         result['full_url'] = full_url
         result['image_height'] = height
