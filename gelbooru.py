@@ -29,7 +29,7 @@ def get_images(query, limit=50, pid=0):
             width = json_item['width']
 
         extension = splitext(basename(full_url))[1]
-        if extension not in ['.jpeg', '.jpg', '.gif', '.png']:
+        if extension not in ['.jpeg', '.jpg', '.gif', '.png', '.webm', '.mp4']:
             continue
 
         result = dict()

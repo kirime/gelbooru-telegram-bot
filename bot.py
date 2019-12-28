@@ -1,4 +1,5 @@
-from telegram import InlineQueryResultPhoto, InlineQueryResultGif, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineQueryResultPhoto, InlineQueryResultGif, InlineQueryResultVideo, \
+    InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, InlineQueryHandler, CallbackQueryHandler
 from gelbooru import get_images, autocomplete
 import logging
@@ -72,7 +73,18 @@ def gelbooru_images(bot, update):
     images = get_images(query, limit=limit, pid=pid)
     for image in images:
         try:
-            if image['full_url'].endswith('.gif'):
+            if image['full_url'].endswith('.webm'):
+                result = InlineQueryResultVideo(
+                    type='video',
+                    id=image['id'],
+                    title=image['id'],
+                    video_url=image['full_url'].replace('.webm', '.mp4'),
+                    mime_type="video/mp4",
+                    thumb_url=image['thumbnail_url'],
+                    reply_markup=image_keyboard(image),
+                )
+                print(result.__dict__)
+            elif image['full_url'].endswith('.gif'):
                 result = InlineQueryResultGif(
                     id=image['id'],
                     title=image['id'],
