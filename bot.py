@@ -66,11 +66,10 @@ def gelbooru_images(bot, update):
 
     offset = update.inline_query.offset
     pid = int(offset) if offset else 0
-    limit = 50
 
     results = []
     query = autocomplete(query)
-    images = get_images(query, limit=limit, pid=pid)
+    images = get_images(query, pid=pid)
     for image in images:
         try:
             if image['full_url'].endswith('.webm'):

@@ -2,11 +2,12 @@ import requests
 import json
 import urllib.parse
 from os.path import splitext, basename
+from typing import List
 
 
-def get_images(query, limit=50, pid=0):
+def get_images(query: str, pid: int = 0) -> List[dict]:
     tags = urllib.parse.quote(query.strip())
-    request_url = f'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit={limit}&pid={pid}&tags={tags}'
+    request_url = f'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit=50&pid={pid}&tags={tags}'
 
     response = requests.get(request_url)
     if response.status_code != 200:
@@ -41,23 +42,22 @@ def get_images(query, limit=50, pid=0):
         result['image_width'] = width
         results.append(result)
 
-    results = results[:50]
     return results
 
 
-def get_thumbnail_url(full_url):
+def get_thumbnail_url(full_url: str) -> str:
     prefix1, prefix2, image_name = full_url.split('/')[-3:]
     image_name = image_name.split('.')[0]
     return f'https://gelbooru.com/thumbnails/{prefix1}/{prefix2}/thumbnail_{image_name}.jpg'
 
 
-def get_sample_url(full_url):
+def get_sample_url(full_url: str) -> str:
     prefix1, prefix2, image_name = full_url.split('/')[-3:]
     image_name = image_name.split('.')[0]
     return f'https://img2.gelbooru.com//samples/{prefix1}/{prefix2}/sample_{image_name}.jpg'
 
 
-def autocomplete(query):
+def autocomplete(query: str) -> str:
     split_query = query.rsplit(' ', 1)
     last_tag = split_query[-1]
     rest_of_query = split_query[0] if len(split_query) > 1 else ''
