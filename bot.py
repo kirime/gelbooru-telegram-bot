@@ -36,7 +36,7 @@ def pong(bot, update):
 
 
 def start(bot, update):
-    update.message.reply_text('This bot does not respond to direct messages. \nUse @christianpicsbot inline syntax.')
+    update.message.reply_text('This bot does not respond to direct messages. \nUse @gbooru_bot inline syntax.')
 
 
 def process_callback(bot, update):
