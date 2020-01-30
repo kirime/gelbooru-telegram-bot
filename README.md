@@ -1,3 +1,3 @@
 # Inline telegram bot for Gelbooru
 
-Usage: @christianpicsbot \[list of tags]
+Usage: @gbooru_bot \[list of tags]
