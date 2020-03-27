@@ -82,7 +82,6 @@ def gelbooru_images(bot, update):
                     thumb_url=image['thumbnail_url'],
                     reply_markup=image_keyboard(image),
                 )
-                print(result.__dict__)
             elif image['full_url'].endswith('.gif'):
                 result = InlineQueryResultGif(
                     id=image['id'],
