@@ -1,6 +1,6 @@
 from telegram import InlineQueryResultPhoto, InlineQueryResultGif, InlineQueryResultVideo, \
-    InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, InlineQueryHandler, CallbackQueryHandler
+    InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import Updater, CommandHandler, InlineQueryHandler, CallbackQueryHandler, CallbackContext
 from gelbooru import get_images, autocomplete
 import logging
 import os
@@ -15,11 +15,11 @@ logger = logging.getLogger()
 mode = os.getenv("MODE")
 TOKEN = os.getenv("TOKEN")
 if mode == "dev":
-    def run(updater):
+    def run(updater: Updater):
         updater.start_polling()
         updater.idle()
 elif mode == "prod":
-    def run(updater):
+    def run(updater: Updater):
         PORT = int(os.getenv("PORT", "8443"))
         HEROKU_APP_NAME = os.getenv("HEROKU_APP_NAME")
         updater.start_webhook(listen="0.0.0.0",
@@ -31,20 +31,20 @@ else:
     sys.exit(1)
 
 
-def pong(bot, update):
+def pong(update: Update):
     update.message.reply_text('Pong')
 
 
-def start(bot, update):
+def start(update: Update):
     update.message.reply_text('This bot does not respond to direct messages. \nUse @gbooru_bot inline syntax.')
 
 
-def process_callback(bot, update):
+def process_callback(update: Update):
     query = update.callback_query
     query.answer()
 
 
-def image_keyboard(image):
+def image_keyboard(image: dict) -> InlineKeyboardMarkup:
     ratings = {
         's': 'Safe',
         'q': 'Questionable',
@@ -59,7 +59,7 @@ def image_keyboard(image):
     return InlineKeyboardMarkup(buttons)
 
 
-def gelbooru_images(bot, update):
+def gelbooru_images(update: Update, context: CallbackContext):
     query = update.inline_query.query
     if not query:
         return
@@ -105,13 +105,13 @@ def gelbooru_images(bot, update):
             results.append(result)
         except Exception as e:
             logger.error(e)
-    bot.answer_inline_query(update.inline_query.id, results, next_offset=str(pid + 1))
+    context.bot.answer_inline_query(update.inline_query.id, results, next_offset=str(pid + 1))
 
 
 if __name__ == '__main__':
     logger.info("Starting bot")
 
-    updater = Updater(TOKEN)
+    updater = Updater(token=TOKEN, use_context=True)
     dispatcher = updater.dispatcher
     gelbooru_handler = InlineQueryHandler(gelbooru_images)
     callback_handler = CallbackQueryHandler(process_callback)
