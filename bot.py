@@ -111,7 +111,12 @@ def gelbooru_images(update: Update, context: CallbackContext):
 if __name__ == '__main__':
     logger.info("Starting bot")
 
-    updater = Updater(token=TOKEN, use_context=True)
+    request_kwargs = {
+        'connect_timeout': 10,
+        'read_timeout': 10
+    }
+
+    updater = Updater(token=TOKEN, request_kwargs=request_kwargs, use_context=True)
     dispatcher = updater.dispatcher
     gelbooru_handler = InlineQueryHandler(gelbooru_images)
     callback_handler = CallbackQueryHandler(process_callback)
