@@ -31,15 +31,15 @@ else:
     sys.exit(1)
 
 
-def pong(update: Update):
+def pong(update: Update, context: CallbackContext):
     update.message.reply_text('Pong')
 
 
-def start(update: Update):
+def start(update: Update, context: CallbackContext):
     update.message.reply_text('This bot does not respond to direct messages. \nUse @gbooru_bot inline syntax.')
 
 
-def process_callback(update: Update):
+def process_callback(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
 
