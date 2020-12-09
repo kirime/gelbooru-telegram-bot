@@ -1,6 +1,7 @@
 from telegram import InlineQueryResultPhoto, InlineQueryResultGif, InlineQueryResultVideo, \
     InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Updater, CommandHandler, InlineQueryHandler, CallbackQueryHandler, CallbackContext
+from telegram.error import BadRequest
 from gelbooru import get_images, autocomplete
 import logging
 import os
@@ -108,6 +109,13 @@ def gelbooru_images(update: Update, context: CallbackContext):
     context.bot.answer_inline_query(update.inline_query.id, results, next_offset=str(pid + 1))
 
 
+def error_callback(update, context):
+    try:
+        raise context.error
+    except BadRequest:
+        logger.error(context.error)
+
+
 if __name__ == '__main__':
     logger.info("Starting bot")
 
@@ -120,5 +128,6 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler('start', start))
     dispatcher.add_handler(gelbooru_handler)
     dispatcher.add_handler(callback_handler)
+    dispatcher.add_error_handler(error_callback)
 
     run(updater)
