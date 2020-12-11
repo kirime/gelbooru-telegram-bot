@@ -69,12 +69,12 @@ def autocomplete(query: str) -> str:
     request_url = f'https://gelbooru.com/index.php?page=autocomplete&term={encoded_last_tag}'
     response = requests.get(request_url)
     if response.status_code != 200:
-        return query
+        raise ConnectionError
 
     try:
         autocompleted_tag_list = list(json.loads(response.text))
         autocompleted_tag = autocompleted_tag_list[0]
     except (IndexError, json.decoder.JSONDecodeError):
-        return query
+        raise ValueError
 
     return ' '.join([rest_of_query, autocompleted_tag])

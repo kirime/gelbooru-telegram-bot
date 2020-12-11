@@ -3,6 +3,7 @@ from telegram import InlineQueryResultPhoto, InlineQueryResultGif, InlineQueryRe
 from telegram.ext import Updater, CommandHandler, InlineQueryHandler, CallbackQueryHandler, CallbackContext
 from telegram.error import BadRequest
 from gelbooru import get_images, autocomplete
+from errors import connection_error_response, value_error_response
 import logging
 import os
 import sys
@@ -113,6 +114,12 @@ def gelbooru_images(update: Update, context: CallbackContext):
 def error_callback(update, context):
     try:
         raise context.error
+    except (OSError, ConnectionError):
+        logger.error(context.error)
+        context.bot.answer_inline_query(update.inline_query.id, [connection_error_response])
+    except ValueError:
+        logger.error(context.error)
+        context.bot.answer_inline_query(update.inline_query.id, [value_error_response])
     except BadRequest:
         logger.error(context.error)
 
