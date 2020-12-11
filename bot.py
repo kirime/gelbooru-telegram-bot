@@ -8,9 +8,10 @@ import os
 import sys
 
 # Enabling logging
-logging.basicConfig(level=logging.INFO,
-                    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+log_level = os.getenv('LOG_LEVEL', default='INFO')
+logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger()
+logger.setLevel(log_level)
 
 # Getting mode, so we could define run function for local and Heroku setup
 mode = os.getenv("MODE")
