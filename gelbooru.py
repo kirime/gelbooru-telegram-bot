@@ -62,7 +62,7 @@ def autocomplete(query: str) -> str:
     last_tag = split_query[-1]
     rest_of_query = split_query[0] if len(split_query) > 1 else ''
 
-    if not last_tag:  # no need to make requests if last tag is empty
+    if not last_tag or last_tag.startswith(('-', '*', '~')) or last_tag.endswith('~') or ':' in last_tag:
         return query
 
     encoded_last_tag = urllib.parse.quote(last_tag)
