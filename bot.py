@@ -73,6 +73,8 @@ def gelbooru_images(update: Update, context: CallbackContext):
     results = []
     query = autocomplete(query)
     images = get_images(query, pid=pid)
+    if pid == 0 and not images:
+        raise ValueError(f'No images match provided query: {query}')
     for image in images:
         try:
             if image['full_url'].endswith('.webm'):

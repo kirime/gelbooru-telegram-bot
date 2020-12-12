@@ -11,7 +11,7 @@ def get_images(query: str, pid: int = 0) -> List[dict]:
 
     response = requests.get(request_url)
     if response.status_code != 200:
-        return []
+        raise ConnectionError(f'Non-200 response from Gelbooru, got {response.status_code} instead')
 
     try:
         json_response = json.loads(response.text)
@@ -69,12 +69,12 @@ def autocomplete(query: str) -> str:
     request_url = f'https://gelbooru.com/index.php?page=autocomplete&term={encoded_last_tag}'
     response = requests.get(request_url)
     if response.status_code != 200:
-        raise ConnectionError
+        raise ConnectionError(f'Non-200 response from Gelbooru, got {response.status_code} instead')
 
     try:
         autocompleted_tag_list = list(json.loads(response.text))
         autocompleted_tag = autocompleted_tag_list[0]
     except (IndexError, json.decoder.JSONDecodeError):
-        raise ValueError
+        raise ValueError(f'No autocompleted tags for tag {last_tag}')
 
     return ' '.join([rest_of_query, autocompleted_tag])
