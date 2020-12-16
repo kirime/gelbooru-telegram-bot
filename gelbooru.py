@@ -66,15 +66,15 @@ def autocomplete(query: str) -> str:
         return query
 
     encoded_last_tag = urllib.parse.quote(last_tag)
-    request_url = f'https://gelbooru.com/index.php?page=autocomplete&term={encoded_last_tag}'
+    request_url = f'https://gelbooru.com/index.php?page=autocomplete2&term={encoded_last_tag}&limit=10'
     response = requests.get(request_url)
     if response.status_code != 200:
         raise ConnectionError(f'Non-200 response from Gelbooru, got {response.status_code} instead')
 
     try:
         autocompleted_tag_list = list(json.loads(response.text))
-        autocompleted_tag = autocompleted_tag_list[0]
-    except (IndexError, json.decoder.JSONDecodeError):
+        autocompleted_tag = autocompleted_tag_list[0]['name']
+    except (IndexError, KeyError, json.decoder.JSONDecodeError):
         raise ValueError(f'No autocompleted tags for tag {last_tag}')
 
     return ' '.join([rest_of_query, autocompleted_tag])
