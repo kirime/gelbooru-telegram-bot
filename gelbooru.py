@@ -73,7 +73,7 @@ def autocomplete(query: str) -> str:
 
     try:
         autocompleted_tag_list = list(json.loads(response.text))
-        autocompleted_tag = autocompleted_tag_list[0]['name']
+        autocompleted_tag = autocompleted_tag_list[0]['value']
     except (IndexError, KeyError, json.decoder.JSONDecodeError):
         raise ValueError(f'No autocompleted tags for tag {last_tag}')
 
