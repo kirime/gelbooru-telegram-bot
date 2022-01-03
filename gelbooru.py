@@ -19,9 +19,9 @@ def get_images(query: str, pid: int = 0) -> List[dict]:
         return []
 
     results = []
-    for json_item in json_response:
+    for json_item in json_response['post']:
         full_url = json_item['file_url']
-        if json_item['sample']:
+        if json_item['sample'] and json_item['sample'] != '0':
             full_url = get_sample_url(json_item['file_url'])
             height = json_item['sample_height']
             width = json_item['sample_width']
