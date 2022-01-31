@@ -19,9 +19,18 @@ def get_images(query: str, pid: int = 0) -> List[dict]:
         return []
 
     results = []
-    for json_item in json_response['post']:
+    if 'post' not in json_response:
+        return results
+    elif isinstance(json_response['post'], dict):
+        json_response_images_data = [json_response['post']]
+    else:
+        json_response_images_data = json_response['post']
+
+    for json_item in json_response_images_data:
         full_url = json_item['file_url']
-        if json_item['sample'] and json_item['sample'] != '0':
+        has_sample = json_item.get('sample') and json_item['sample'] != '0'
+        is_video = full_url.endswith('.mp4') or full_url.endswith('.webm')
+        if has_sample and not is_video:
             full_url = get_sample_url(json_item['file_url'])
             height = json_item['sample_height']
             width = json_item['sample_width']
@@ -41,7 +50,6 @@ def get_images(query: str, pid: int = 0) -> List[dict]:
         result['image_height'] = height
         result['image_width'] = width
         results.append(result)
-
     return results
 
 

@@ -50,9 +50,9 @@ def process_callback(update: Update, context: CallbackContext):
 
 def image_keyboard(image: dict) -> InlineKeyboardMarkup:
     ratings = {
-        's': 'Safe',
-        'q': 'Questionable',
-        'e': 'Explicit',
+        'safe': 'Safe',
+        'questionable': 'Questionable',
+        'explicit': 'Explicit',
     }
 
     buttons = [[InlineKeyboardButton(ratings.get(image['rating'], 'No rating'),
@@ -68,6 +68,9 @@ def gelbooru_images(update: Update, context: CallbackContext):
     if not query:
         return
 
+    logger.info(f'{update.inline_query.from_user.username} {update.inline_query.from_user.first_name} '
+                f'{update.inline_query.from_user.last_name}: query : {query}')
+
     offset = update.inline_query.offset
     pid = int(offset) if offset else 0
 
@@ -78,12 +81,12 @@ def gelbooru_images(update: Update, context: CallbackContext):
         raise ValueError(f'No images match provided query: {query}')
     for image in images:
         try:
-            if image['full_url'].endswith('.webm'):
+            if image['full_url'].endswith('.webm') or image['full_url'].endswith('.mp4'):
                 result = InlineQueryResultVideo(
                     type='video',
                     id=image['id'],
-                    title=image['id'],
-                    video_url=image['full_url'].replace('.webm', '.mp4'),
+                    title=f"Video {image['image_width']}×{image['image_height']}",
+                    video_url=image['full_url'],
                     mime_type="video/mp4",
                     thumb_url=image['thumbnail_url'],
                     reply_markup=image_keyboard(image),
