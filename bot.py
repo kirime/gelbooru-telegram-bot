@@ -91,7 +91,6 @@ def gelbooru_images(update: Update, context: CallbackContext):
                     video_url=image['full_url'],
                     mime_type="video/mp4",
                     thumb_url=image['thumbnail_url'],
-                    caption=image['page_url'],
                     reply_markup=image_keyboard(image=image, query=query),
                 )
             elif image['full_url'].endswith('.gif'):
@@ -102,7 +101,6 @@ def gelbooru_images(update: Update, context: CallbackContext):
                     thumb_url=image['thumbnail_url'],
                     gif_height=image['image_width'],
                     gif_width=image['image_height'],
-                    caption=image['page_url'],
                     reply_markup=image_keyboard(image=image, query=query),
                 )
             else:
@@ -113,7 +111,6 @@ def gelbooru_images(update: Update, context: CallbackContext):
                     thumb_url=image['thumbnail_url'],
                     photo_height=image['image_height'],
                     photo_width=image['image_width'],
-                    caption=image['page_url'],
                     reply_markup=image_keyboard(image=image, query=query),
                 )
             results.append(result)
