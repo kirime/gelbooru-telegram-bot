@@ -44,6 +44,7 @@ def get_images(query: str, pid: int = 0) -> List[dict]:
 
         result = dict()
         result['id'] = json_item['id']
+        result['page_url'] = get_page_url_from_image_id(json_item['id'])
         result['rating'] = json_item['rating']
         result['thumbnail_url'] = get_thumbnail_url(json_item['file_url'])
         result['full_url'] = full_url
@@ -63,6 +64,10 @@ def get_sample_url(full_url: str) -> str:
     prefix1, prefix2, image_name = full_url.split('/')[-3:]
     image_name = image_name.split('.')[0]
     return f'https://img3.gelbooru.com//samples/{prefix1}/{prefix2}/sample_{image_name}.jpg'
+
+
+def get_page_url_from_image_id(image_id: int) -> str:
+    return f'https://gelbooru.com/index.php?page=post&s=view&id={str(image_id)}'
 
 
 def autocomplete(query: str) -> str:

@@ -48,7 +48,7 @@ def process_callback(update: Update, context: CallbackContext):
     query.answer()
 
 
-def image_keyboard(image: dict) -> InlineKeyboardMarkup:
+def image_keyboard(image: dict, query: str) -> InlineKeyboardMarkup:
     ratings = {
         'safe': 'Safe',
         'questionable': 'Questionable',
@@ -59,6 +59,8 @@ def image_keyboard(image: dict) -> InlineKeyboardMarkup:
                                      callback_data=image['rating']),
                 InlineKeyboardButton('\U0001F517',
                                      url=f'https://gelbooru.com/index.php?page=post&s=view&id={image["id"]}'),
+                InlineKeyboardButton('\U0001F504',
+                                     switch_inline_query_current_chat=query),
                 ]]
     return InlineKeyboardMarkup(buttons)
 
@@ -89,7 +91,8 @@ def gelbooru_images(update: Update, context: CallbackContext):
                     video_url=image['full_url'],
                     mime_type="video/mp4",
                     thumb_url=image['thumbnail_url'],
-                    reply_markup=image_keyboard(image),
+                    caption=image['page_url'],
+                    reply_markup=image_keyboard(image=image, query=query),
                 )
             elif image['full_url'].endswith('.gif'):
                 result = InlineQueryResultGif(
@@ -99,7 +102,8 @@ def gelbooru_images(update: Update, context: CallbackContext):
                     thumb_url=image['thumbnail_url'],
                     gif_height=image['image_width'],
                     gif_width=image['image_height'],
-                    reply_markup=image_keyboard(image),
+                    caption=image['page_url'],
+                    reply_markup=image_keyboard(image=image, query=query),
                 )
             else:
                 result = InlineQueryResultPhoto(
@@ -109,7 +113,8 @@ def gelbooru_images(update: Update, context: CallbackContext):
                     thumb_url=image['thumbnail_url'],
                     photo_height=image['image_height'],
                     photo_width=image['image_width'],
-                    reply_markup=image_keyboard(image),
+                    caption=image['page_url'],
+                    reply_markup=image_keyboard(image=image, query=query),
                 )
             results.append(result)
         except Exception as e:
