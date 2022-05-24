@@ -49,13 +49,7 @@ def process_callback(update: Update, context: CallbackContext):
 
 
 def image_keyboard(image: dict, query: str) -> InlineKeyboardMarkup:
-    ratings = {
-        'safe': 'Safe',
-        'questionable': 'Questionable',
-        'explicit': 'Explicit',
-    }
-
-    buttons = [[InlineKeyboardButton(ratings.get(image['rating'], 'No rating'),
+    buttons = [[InlineKeyboardButton(str(image['rating']).capitalize(),
                                      callback_data=image['rating']),
                 InlineKeyboardButton('\U0001F517',
                                      url=f'https://gelbooru.com/index.php?page=post&s=view&id={image["id"]}'),
