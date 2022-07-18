@@ -5,9 +5,11 @@ from os.path import splitext, basename
 from typing import List
 
 
-def get_images(query: str, pid: int = 0) -> List[dict]:
+def get_images(query: str, pid: int = 0, api_key: str = None, user_id: str = None) -> List[dict]:
     tags = urllib.parse.quote(query.strip())
     request_url = f'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit=50&pid={pid}&tags={tags}'
+    if api_key and user_id:
+        request_url += f'&api_key={api_key}&user_id={user_id}'
 
     response = requests.get(request_url)
     if response.status_code != 200:

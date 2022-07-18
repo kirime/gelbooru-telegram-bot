@@ -17,6 +17,9 @@ logger.setLevel(log_level)
 # Getting mode, so we could define run function for local and Heroku setup
 mode = os.getenv("MODE")
 TOKEN = os.getenv("TOKEN")
+API_KEY = os.getenv("GELBOORU_API_KEY", None)
+USER_ID = os.getenv("GELBOORU_USER_ID", None)
+
 if mode == "dev":
     def run(updater: Updater):
         updater.start_polling()
@@ -72,7 +75,7 @@ def gelbooru_images(update: Update, context: CallbackContext):
 
     results = []
     query = autocomplete(query)
-    images = get_images(query, pid=pid)
+    images = get_images(query, pid=pid, api_key=API_KEY, user_id=USER_ID)
     if pid == 0 and not images:
         raise ValueError(f'No images match provided query: {query}')
     for image in images:
