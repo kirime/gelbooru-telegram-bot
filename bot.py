@@ -7,31 +7,26 @@ from errors import connection_error_response, value_error_response
 import logging
 import os
 import sys
+import settings
 
 # Enabling logging
-log_level = os.getenv('LOG_LEVEL', default='INFO')
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger()
-logger.setLevel(log_level)
+logger.setLevel(settings.LOG_LEVEL)
 
 # Getting mode, so we could define run function for local and Heroku setup
-mode = os.getenv("MODE")
-TOKEN = os.getenv("TOKEN")
-API_KEY = os.getenv("GELBOORU_API_KEY", None)
-USER_ID = os.getenv("GELBOORU_USER_ID", None)
-
-if mode == "dev":
+if settings.MODE == "dev":
     def run(updater: Updater):
         updater.start_polling()
         updater.idle()
-elif mode == "prod":
+elif settings.MODE == "prod":
     def run(updater: Updater):
         PORT = int(os.getenv("PORT", "8443"))
         HEROKU_APP_NAME = os.getenv("HEROKU_APP_NAME")
         updater.start_webhook(listen="0.0.0.0",
                               port=PORT,
-                              url_path=TOKEN,
-                              webhook_url=f'https://{HEROKU_APP_NAME}.herokuapp.com/{TOKEN}')
+                              url_path=settings.TOKEN,
+                              webhook_url=f'https://{HEROKU_APP_NAME}.herokuapp.com/{settings.TOKEN}')
         updater.idle()
 else:
     logger.error("No MODE specified!")
@@ -54,9 +49,9 @@ def process_callback(update: Update, context: CallbackContext):
 def image_keyboard(image: dict, query: str) -> InlineKeyboardMarkup:
     buttons = [[InlineKeyboardButton(str(image['rating']).capitalize(),
                                      callback_data=image['rating']),
-                InlineKeyboardButton('\U0001F517',
+                InlineKeyboardButton('\U0001F517',  # link symbol
                                      url=f'https://gelbooru.com/index.php?page=post&s=view&id={image["id"]}'),
-                InlineKeyboardButton('\U0001F504',
+                InlineKeyboardButton('\U0001F504',  # redo symbol
                                      switch_inline_query_current_chat=query),
                 ]]
     return InlineKeyboardMarkup(buttons)
@@ -75,7 +70,7 @@ def gelbooru_images(update: Update, context: CallbackContext):
 
     results = []
     query = autocomplete(query)
-    images = get_images(query, pid=pid, api_key=API_KEY, user_id=USER_ID)
+    images = get_images(query, pid=pid, api_key=settings.API_KEY, user_id=settings.USER_ID)
     if pid == 0 and not images:
         raise ValueError(f'No images match provided query: {query}')
     for image in images:
@@ -96,8 +91,8 @@ def gelbooru_images(update: Update, context: CallbackContext):
                     title=image['id'],
                     gif_url=image['full_url'],
                     thumb_url=image['thumbnail_url'],
-                    gif_height=image['image_width'],
-                    gif_width=image['image_height'],
+                    gif_height=image['image_height'],
+                    gif_width=image['image_width'],
                     reply_markup=image_keyboard(image=image, query=query),
                 )
             else:
@@ -133,11 +128,11 @@ if __name__ == '__main__':
     logger.info("Starting bot")
 
     request_kwargs = {
-        'connect_timeout': 10,
-        'read_timeout': 10
+        'connect_timeout': settings.CONNECT_TIMEOUT,
+        'read_timeout': settings.READ_TIMEOUT,
     }
 
-    updater = Updater(token=TOKEN, request_kwargs=request_kwargs)
+    updater = Updater(token=settings.TOKEN, request_kwargs=request_kwargs)
     dispatcher = updater.dispatcher
     gelbooru_handler = InlineQueryHandler(gelbooru_images)
     callback_handler = CallbackQueryHandler(process_callback)
