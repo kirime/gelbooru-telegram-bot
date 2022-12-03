@@ -5,31 +5,28 @@ from telegram.error import BadRequest
 from gelbooru import get_images, autocomplete
 from errors import connection_error_response, value_error_response
 import logging
-import os
 import sys
 import settings
 
 # Enabling logging
-logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger()
 logger.setLevel(settings.LOG_LEVEL)
 
-# Getting mode, so we could define run function for local and Heroku setup
-if settings.MODE == "dev":
+# Getting mode, so we could define run function for local and server setup
+if settings.MODE == 'dev':
     def run(updater: Updater):
         updater.start_polling()
         updater.idle()
-elif settings.MODE == "prod":
+elif settings.MODE == 'prod':
     def run(updater: Updater):
-        PORT = int(os.getenv("PORT", "8443"))
-        HEROKU_APP_NAME = os.getenv("HEROKU_APP_NAME")
-        updater.start_webhook(listen="0.0.0.0",
-                              port=PORT,
+        updater.start_webhook(listen='0.0.0.0',
+                              port=settings.PORT,
                               url_path=settings.TOKEN,
-                              webhook_url=f'https://{HEROKU_APP_NAME}.herokuapp.com/{settings.TOKEN}')
+                              webhook_url=f'{settings.WEBHOOK_PATH}/{settings.TOKEN}')
         updater.idle()
 else:
-    logger.error("No MODE specified!")
+    logger.error('No MODE specified!')
     sys.exit(1)
 
 
@@ -79,9 +76,9 @@ def gelbooru_images(update: Update, context: CallbackContext):
                 result = InlineQueryResultVideo(
                     type='video',
                     id=image['id'],
-                    title=f"Video {image['image_width']}×{image['image_height']}",
+                    title=f'Video {image["image_width"]}×{image["image_height"]}',
                     video_url=image['full_url'],
-                    mime_type="video/mp4",
+                    mime_type='video/mp4',
                     thumb_url=image['thumbnail_url'],
                     reply_markup=image_keyboard(image=image, query=query),
                 )
@@ -125,7 +122,7 @@ def error_callback(update, context):
 
 
 if __name__ == '__main__':
-    logger.info("Starting bot")
+    logger.info('Starting bot')
 
     request_kwargs = {
         'connect_timeout': settings.CONNECT_TIMEOUT,
