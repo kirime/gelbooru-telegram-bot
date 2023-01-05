@@ -92,4 +92,7 @@ def autocomplete(query: str) -> str:
     except (IndexError, KeyError, json.decoder.JSONDecodeError):
         raise ValueError(f'No autocompleted tags for tag {last_tag}')
 
-    return ' '.join([rest_of_query, autocompleted_tag])
+    if rest_of_query:
+        return f'{rest_of_query} {autocompleted_tag}'
+    else:
+        return autocompleted_tag
