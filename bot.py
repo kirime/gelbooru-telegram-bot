@@ -3,7 +3,7 @@ from telegram import InlineQueryResultPhoto, InlineQueryResultGif, InlineQueryRe
 from telegram.ext import Updater, CommandHandler, InlineQueryHandler, CallbackQueryHandler, CallbackContext
 from telegram.error import BadRequest
 from gelbooru import get_images, autocomplete
-from errors import connection_error_response, value_error_response
+from errors import connection_error_response, no_results_error_response, autocomplete_error_response
 import logging
 import sys
 import settings
@@ -65,11 +65,17 @@ def gelbooru_images(update: Update, context: CallbackContext):
     offset = update.inline_query.offset
     pid = int(offset) if offset else 0
 
-    results = []
     query = autocomplete(query)
+    if query is None:
+        context.bot.answer_inline_query(update.inline_query.id, [autocomplete_error_response])
+        return
+
+    results = []
     images = get_images(query, pid=pid, api_key=settings.API_KEY, user_id=settings.USER_ID)
     if pid == 0 and not images:
-        raise ValueError(f'No images match provided query: {query}')
+        context.bot.answer_inline_query(update.inline_query.id, [no_results_error_response])
+        return
+
     for image in images:
         try:
             if image['full_url'].endswith('.webm') or image['full_url'].endswith('.mp4'):
@@ -114,9 +120,6 @@ def error_callback(update, context):
     except (OSError, ConnectionError):
         logger.error(context.error)
         context.bot.answer_inline_query(update.inline_query.id, [connection_error_response])
-    except ValueError:
-        logger.error(context.error)
-        context.bot.answer_inline_query(update.inline_query.id, [value_error_response])
     except BadRequest:
         logger.error(context.error)
 

@@ -2,7 +2,7 @@ import requests
 import json
 import urllib.parse
 from os.path import splitext, basename
-from typing import List
+from typing import List, Optional
 
 
 def get_images(query: str, pid: int = 0, api_key: str = None, user_id: str = None) -> List[dict]:
@@ -72,7 +72,7 @@ def get_page_url_from_image_id(image_id: int) -> str:
     return f'https://gelbooru.com/index.php?page=post&s=view&id={str(image_id)}'
 
 
-def autocomplete(query: str) -> str:
+def autocomplete(query: str) -> Optional[str]:
     split_query = query.rsplit(' ', 1)
     last_tag = split_query[-1]
     rest_of_query = split_query[0] if len(split_query) > 1 else ''
@@ -90,7 +90,7 @@ def autocomplete(query: str) -> str:
         autocompleted_tag_list = list(json.loads(response.text))
         autocompleted_tag = autocompleted_tag_list[0]['value']
     except (IndexError, KeyError, json.decoder.JSONDecodeError):
-        raise ValueError(f'No autocompleted tags for tag {last_tag}')
+        return None
 
     if rest_of_query:
         return f'{rest_of_query} {autocompleted_tag}'
