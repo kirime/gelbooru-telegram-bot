@@ -73,6 +73,8 @@ def get_page_url_from_image_id(image_id: int) -> str:
 
 
 def autocomplete(query: str) -> Optional[str]:
+    """ Autocomplete last word in query to the most popular Gelbooru tag that starts with this word.
+        Do nothing if the word is already a valid Gelbooru tag. """
     split_query = query.rsplit(' ', 1)
     last_tag = split_query[-1]
     rest_of_query = split_query[0] if len(split_query) > 1 else ''
@@ -87,8 +89,12 @@ def autocomplete(query: str) -> Optional[str]:
         raise ConnectionError(f'Non-200 response from Gelbooru, got {response.status_code} instead')
 
     try:
-        autocompleted_tag_list = list(json.loads(response.text))
-        autocompleted_tag = autocompleted_tag_list[0]['value']
+        autocompleted_tag_list = list(tag['value'] for tag in json.loads(response.text))
+        # Do not autocomplete last word if it is already a valid tag
+        if last_tag in autocompleted_tag_list:
+            autocompleted_tag = last_tag
+        else:
+            autocompleted_tag = autocompleted_tag_list[0]
     except (IndexError, KeyError, json.decoder.JSONDecodeError):
         return None
 
