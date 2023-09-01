@@ -65,7 +65,7 @@ def get_thumbnail_url(full_url: str) -> str:
 def get_sample_url(full_url: str) -> str:
     prefix1, prefix2, image_name = full_url.split('/')[-3:]
     image_name = image_name.split('.')[0]
-    return f'https://img3.gelbooru.com//samples/{prefix1}/{prefix2}/sample_{image_name}.jpg'
+    return f'https://img1.gelbooru.com//samples/{prefix1}/{prefix2}/sample_{image_name}.jpg'
 
 
 def get_page_url_from_image_id(image_id: int) -> str:
