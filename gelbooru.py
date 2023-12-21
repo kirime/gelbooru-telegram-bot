@@ -29,7 +29,7 @@ def get_images(query: str, pid: int = 0, api_key: str = None, user_id: str = Non
         json_response_images_data = json_response['post']
 
     for json_item in json_response_images_data:
-        full_url = json_item['file_url'].replace('img3.', 'img1.')   # img3 seems to be faulty at the moment
+        full_url = json_item['file_url']
         has_sample = json_item.get('sample') and json_item['sample'] != '0'
         is_video = full_url.endswith('.mp4') or full_url.endswith('.webm')
         if has_sample and not is_video:
